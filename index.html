@@ -1,0 +1,1060 @@
+<html>
+<head>
+<link rel="icon" type="image/webp" href="assets/favicon.webp"/>    
+    <title>
+        white pawn
+    </title>
+    <style>
+		* {
+            background:#1a1a1a;
+        }
+		body { 
+			margin: 0; 
+		}
+        canvas{
+            position: absolute;
+			left: 50%;
+			transform: translate(-50%);
+			height: 100%; 
+        }
+    </style>
+</head>
+<body>
+<canvas id="myCanvas" width="1920" height="1080"></canvas>
+<script>
+
+{
+canvas = document.getElementById("myCanvas");
+ctx = canvas.getContext("2d");
+imagesLoaded = 0;
+waiting = false
+white = new Image()
+white.src = 'assets/white.png'
+white.onload = load
+
+dots = new Image()
+dots.src = 'assets/dots.png'
+dots.onload = load
+
+black = new Image()
+black.src = 'assets/black.png'
+black.onload = load
+
+block = new Image()
+block.src = 'assets/block.png'
+block.onload = load
+
+boat = new Image()
+boat.src = 'assets/boat.png'
+boat.onload = load
+
+white2 = new Image()
+white2.src = 'assets/white2.png'
+white2.onload = load
+
+black2 = new Image()
+black2.src = 'assets/black2.png'
+black2.onload = load
+
+oar = new Image()
+oar.src = 'assets/oar.png'
+oar.onload = load
+
+water = new Image()
+water.src = 'assets/water.png'
+water.onload = load
+
+nope1 = new Image()
+nope1.src = 'assets/nope1.png'
+nope1.onload = load
+
+nope2 = new Image()
+nope2.src = 'assets/nope2.png'
+nope2.onload = load
+
+down = new Image()
+down.src = 'assets/down.png'
+down.onload = load
+
+up = new Image()
+up.src = 'assets/up.png'
+up.onload = load
+
+left = new Image()
+left.src = 'assets/left.png'
+left.onload = load
+
+right = new Image()
+right.src = 'assets/right.png'
+right.onload = load
+
+menu = new Image()
+menu.src = 'assets/menu.png'
+menu.onload = load
+
+movie = new Image()
+movie.src = 'assets/moves.png'
+movie.onload = load
+
+lvl = new Image()
+lvl.src = 'assets/level.png'
+lvl.onload = load
+
+zero = new Image()
+zero.src = 'assets/0.png'
+zero.onload = load
+
+one = new Image()
+one.src = 'assets/1.png'
+one.onload = load
+
+two = new Image()
+two.src = 'assets/2.png'
+two.onload = load
+
+three = new Image()
+three.src = 'assets/3.png'
+three.onload = load
+
+four = new Image()
+four.src = 'assets/4.png'
+four.onload = load
+
+five = new Image()
+five.src = 'assets/5.png'
+five.onload = load
+
+six = new Image()
+six.src = 'assets/6.png'
+six.onload = load
+
+seven = new Image()
+seven.src = 'assets/7.png'
+seven.onload = load
+
+eight = new Image()
+eight.src = 'assets/8.png'
+eight.onload = load
+
+nine = new Image()
+nine.src = 'assets/9.png'
+nine.onload = load
+
+title = new Image()
+title.src = 'assets/title.png'
+title.onload = load
+
+tpawn = new Image()
+tpawn.src = 'assets/tpawn.png'
+tpawn.onload = load
+}
+function step(pawns, level){
+
+	if (pawns[0][0]==gridy-1){
+		return [false, pawns, level, boats, []]
+	}
+	
+	for (i=pawns.length-1;i>0;i--){
+		if (pawns[i][0]==gridy-1){
+			pawns.splice(i, 1)
+		}
+	}
+			
+    for (i=0;i<pawns.length;i++){
+	pawn = pawns[i]
+	if (!pawn[3]){
+	    if (pawn[2]){
+		if (level[pawn[0]][pawn[1]+1]){
+		    if (level[pawn[0]][pawn[1]-1]){
+			pawn[3] = true
+		    }else{
+			pawn[2] = false
+		    }
+		}
+	    }else{
+		if (level[pawn[0]][pawn[1]-1]){
+		    if (level[pawn[0]][pawn[1]+1]){
+			pawn[3] = true
+		    }else{
+			pawn[2] = true
+		    }
+		}
+	    }
+	}
+    }
+	crashes = []
+	
+	spl = new Set()
+    for (i=pawns.length-1;i>-1;i--){
+	for (j=pawns.length-1;j>i;j--){
+	    if (pawns[i][0] == pawns[j][0] && pawns[i][1]==pawns[j][1]){
+			crashes.push([pawns[i][0], pawns[i][1], i==0])
+		    spl.add(i)
+			spl.add(j)	
+		    if (i==0){
+				return [false, pawns, level, [], crashes]
+		    }    
+		}
+	    }
+	}
+	spl = Array.from(spl).sort();
+	for (i=spl.length-1;i>-1;i--){
+		pawns.splice(spl[i],1)
+	}
+	
+	    for (i=pawns.length-1;i>-1;i--){
+	flag = false
+	for (j=pawns.length-1;j>i;j--){
+	    if (pawns[i][0] == pawns[j][0]){
+		hit = false
+		if (pawns[i][1] + 1 == pawns[j][1] && pawns[i][2] && !pawns[j][2]) hit = true
+		if (pawns[i][1] == pawns[j][1] + 1 && !pawns[i][2] && pawns[j][2]) hit = true
+		if (hit){
+				
+			if (pawns[i][1]<pawns[j][1]){
+				crashes.push([pawns[i][0], pawns[i][1]+1/2, pawns[i][4], pawns[j][4],i==0])
+			}else{
+				crashes.push([pawns[i][0], pawns[j][1]+1/2, pawns[j][4], pawns[i][4],i==0 ])
+			}
+			
+			
+		    pawns.splice(j, 1)
+			
+			
+		    flag = true
+		}
+	    }
+	}
+	if (flag){
+	    pawns.splice(i, 1)
+	}
+    }
+    retflag = null
+    boats = []
+    for (pi=pawns.length-1;pi>-1;pi--){
+		pawn = pawns[pi]
+		if (!pawn[3]){
+			if (pawn[2]){
+				pawn[1]++
+				if (level[pawn[0]+1][pawn[1]-1] > 1 && !level[pawn[0]+1][pawn[1]]){
+					level[pawn[0]+1][pawn[1]-1] = 0
+					level[pawn[0]+1][pawn[1]] = 3
+					boats.push(pi)
+					if (pawn[1] == gridx+1+(pi==0)*2){ 
+						retflag = !!pawn[4]
+						continue
+					}
+				}
+			}else{
+				pawn[1]--
+				if (level[pawn[0]+1][pawn[1]+1] > 1 && !level[pawn[0]+1][pawn[1]]){
+					level[pawn[0]+1][pawn[1]+1] = 0
+					level[pawn[0]+1][pawn[1]] = 2
+					boats.push(pi)
+					if (pawn[1] == -2-(pi==0)*2){
+						retflag = !!pawn[4]
+						continue
+					}
+				}
+			}
+		}
+    }
+	for (pi=pawns.length-1;pi>-1;pi--){
+		pawn = pawns[pi]
+		if (!pawn[3]){
+			while (!level[pawn[0]+1][pawn[1]]){
+				pawn[0]++
+				if (pawn[0]==gridy-1){
+					break
+				}
+			}
+		}
+    }
+    if (!(retflag==null)){
+        return [retflag, pawns, level, boats, crashes]
+    }
+	if (pawns.length==0 || !pawns[0][4]){
+		already = false
+		for (i=0;i<crashes.length;i++){
+		already = already || crashes[i][2] || crashes[i][3]
+		}
+		if (!already){
+			return [false, pawns, level, boats, crashes]
+		}
+	}else{
+	
+		pawns[0][6][pawns[0][0]*gridx+pawns[0][1]]++
+		if (pawns[0][6][pawns[0][0]*gridx+pawns[0][1]] == 3){
+			return [false, pawns, level, boats, crashes]
+		}
+	}
+    return [null, pawns, level, boats, crashes]
+}
+function render(pawns, level, crashes){
+
+	if (pawns.length){
+	if (pawns[0][4]){
+	
+	blend = Math.max(Math.max(pawns[0][1]-gridx, -pawns[0][1])/2,0)
+	
+	
+	}else{
+	blend=0
+	}
+	}
+
+
+    offsey = (Math.cos((frame%140)/140*2*Math.PI)+1)*2*size/50
+    function rot(im, ang, x,y, w,h,corner){
+	if (!corner){
+	    ctx.translate(x+h,y)
+	    ctx.scale(-1, 1);
+	}else{
+	    ctx.translate(x,y)
+	}
+	ctx.rotate(ang);
+	ctx.drawImage(im,0,0,w,h);
+	ctx.rotate(-ang);
+	if (!corner){
+	    ctx.scale(-1, 1);
+	    ctx.translate(-x-h,-y);
+	}else{
+	    ctx.translate(-x,-y)
+	}
+    }
+	
+	ctx.fillStyle=blendme(colors[levelnum-1], colors[levelnum], blend)
+	if (frame==66) console.log(blendme(colors[levelnum-1], colors[levelnum], blend))
+    ctx.fillRect(0,0,1920,1080)
+	
+    for (pi=0;pi<pawns.length;pi++){
+	pawn = pawns[pi]
+	if (pawn[4]){
+	    if (pawn[2]){
+		ctx.drawImage(white2, globalx+pawn[1]*size, globaly+pawn[0]*size+offsey*pawn[5], size, size);
+	    }else{
+		ctx.drawImage(white, globalx+pawn[1]*size, globaly+pawn[0]*size+offsey*pawn[5], size, size);
+	    }
+	}else{
+	    if (pawn[2]){
+		ctx.drawImage(black2, globalx+pawn[1]*size, globaly+pawn[0]*size+offsey*pawn[5], size, size);
+	    }else{
+		ctx.drawImage(black, globalx+pawn[1]*size, globaly+pawn[0]*size+offsey*pawn[5], size, size);
+	    }
+	}
+	if (pawn[5]){
+	    ctx.drawImage(boat, globalx+pawn[1]*size-1.5/50*size, globaly+(1+pawn[0])*size-29/50*size+offsey, size/50*53, size);
+	}
+    }
+    for (i=0;i<gridy;i++){
+	for (j=0;j<gridx;j++){
+	    if (level[i][j]>1 && level[i][j]<4){
+    		ctx.drawImage(boat, globalx+j*size-1.5*size/50, globaly+i*size-29*size/50+offsey, 53*size/50, size);
+	    }
+	}
+    }
+    offset = ((frame*0.15)%152)*size/50
+	
+	
+	
+	
+	numwaters = Math.ceil(gridy/9*16/3)+1
+	for (i=0;i<numwaters;i++){
+		ctx.drawImage(water, offset+152*(i-1)*size/50, globaly+(gridy-1)*size+offsey, 152/50*size+0.5, 51/50*size);
+	}
+	
+    for (i=0;i<gridy;i++){
+	for (j=0;j<gridx;j++){
+	    if (level[i][j]==1){
+    		ctx.drawImage(block, globalx+j*size, globaly+i*size, size, size);
+	    }
+	}
+    }
+	for (i=0;i<gridy;i++){
+	for (j=0;j<gridx;j++){
+	    if (level[i][j]==9){
+    		ctx.drawImage(dots, globalx+j*size, globaly+i*size, size, size);
+	    }
+		if (level[i][j]==5){
+    		ctx.drawImage(up, globalx+j*size, globaly+i*size, size, size);
+	    }
+		
+		if (level[i][j]==6){
+    		ctx.drawImage(right, globalx+j*size, globaly+i*size, size, size);
+	    }
+		
+		if (level[i][j]==7){
+    		ctx.drawImage(down, globalx+j*size, globaly+i*size, size, size);
+	    }
+		if (level[i][j]==8){
+    		ctx.drawImage(left, globalx+j*size, globaly+i*size, size, size);
+	    }
+		if (level[i][j]==14){
+    		ctx.drawImage(up, globalx+j*size, globaly+i*size, size, size);
+			ctx.drawImage(dots, globalx+j*size, globaly+i*size, size, size);
+	    }
+		
+		if (level[i][j]==15){
+    		ctx.drawImage(right, globalx+j*size, globaly+i*size, size, size);
+			ctx.drawImage(dots, globalx+j*size, globaly+i*size, size, size);
+	    }
+		
+		if (level[i][j]==16){
+    		ctx.drawImage(down, globalx+j*size, globaly+i*size, size, size);
+			ctx.drawImage(dots, globalx+j*size, globaly+i*size, size, size);
+	    }
+		if (level[i][j]==17){
+    		ctx.drawImage(left, globalx+j*size, globaly+i*size, size, size);
+			ctx.drawImage(dots, globalx+j*size, globaly+i*size, size, size);
+	    }
+	}
+    }
+    for (i=0;i<gridy;i++){
+	for (j=0;j<gridx;j++){
+	    if (level[i][j]>1&&level[i][j]<4){
+		if (level[i][j]==3){
+		    rot(oar, -0.1, globalx+j*size, globaly+i*size-16/50*size+offsey, size, size, true)
+		}else{
+		    rot(oar, -0.1, globalx+j*size, globaly+i*size-16/50*size+offsey, size, size, false)
+		}
+	    }
+	}
+    }
+    for (pi=0;pi<pawns.length;pi++){
+	pawn = pawns[pi]
+	if (pawn[5]){
+	    if (frame%30<20){
+		phase = -0.1 + (frame%30)/20*0.4
+	    }else{
+		phase = 1.1 - (frame%30)/20*0.8
+	    }
+	    if (!pawn[2]){
+		rot(oar, phase, globalx+pawn[1]*size, globaly+(1+pawn[0])*size-16*size/50+offsey, size, size, false)
+	    }else{
+		rot(oar, phase, globalx+pawn[1]*size, globaly+(1+pawn[0])*size-16*size/50+offsey, size, size, true)
+	    }
+	}
+    }
+	
+	for (i=0;i<crashes.length;i++){
+		if (crashes[i][2]){
+			ctx.drawImage(nope1, globalx+crashes[i][1]*size, globaly+crashes[i][0]*size, size, size);
+		}else{
+			ctx.drawImage(nope2, globalx+crashes[i][1]*size, globaly+crashes[i][0]*size, size, size);
+		}
+	}
+	
+	
+	menusize = 180
+	othersize = 0.6
+	if (waiting){
+		ctx.drawImage(menu, 1920-(menusize+16)*217/210, 540 - menusize/2, menusize*217/210, menusize)
+		num = [zero, one, two, three, four, five, six, seven, eight, nine][maxmoves-moves]
+	ctx.drawImage(num, 24,  95, num.width*othersize, num.height*othersize)
+	ctx.drawImage(movie, 40+num.width*othersize, 97, movie.width*othersize, movie.height*othersize)
+	ctx.drawImage(lvl, 20, 20, lvl.width*othersize, lvl.height*othersize)
+	
+	if (levelnum<10){
+	num = [zero, one, two, three, four, five, six, seven, eight, nine][levelnum]
+	ctx.drawImage(num, 167,  24, num.width*othersize, num.height*othersize)
+	}else{
+	ctx.drawImage(one, 167,  24, one.width*othersize, one.height*othersize)
+	num = [zero, one, two, three, four, five, six, seven, eight, nine][levelnum-10]
+	ctx.drawImage(num, 167+44*othersize,  24, num.width*othersize, num.height*othersize)
+	}
+	
+	}
+	
+	
+	
+	
+	
+
+}
+function loop(){
+
+	if (frame<0){
+	p = ((frame+dropspeed) % dropspeed) / dropspeed
+	frame++
+	
+	pawnsr = []
+	for (i=0;i<pawns.length;i++){
+		if (!drops[i]){
+			pawnsr.push([pawns[i][0],pawns[i][1],pawns[i][2], pawns[i][3], pawns[i][4], 0])
+		}else{
+			pawnsr.push([pawns[i][0]-drops[i]+drops[i]*p**2,pawns[i][1],pawns[i][2], pawns[i][3], pawns[i][4], 0])
+		}
+	}
+    levelr = JSON.parse(JSON.stringify(level));
+	render(pawnsr, levelr, [])
+	
+		
+	}else{
+
+    if (frame%30 == 0){
+	old0 = JSON.parse(JSON.stringify(pawns));
+	[res, pawns, level, boats, crashes] = step(pawns, level)
+        newids = []
+	for (i=0;i<pawns.length;i++){
+	    newids.push(pawns[i][5])
+	}
+	old = []
+	for (i=0;i<old0.length;i++){
+	    if (newids.indexOf(old0[i][5])>=0){
+		old.push(old0[i])
+	    }
+	}
+	h = 17/50 // height of bounce
+	d = []
+	for (i=0;i<pawns.length;i++){
+	    d.push(old[i][0]-pawns[i][0])
+	}
+	v = []
+	for (i=0;i<pawns.length;i++){
+	    v.push(2*(h+(h**2-h*d[i])**0.5))
+	}
+	a = []
+	for (i=0;i<pawns.length;i++){
+	    a.push(2*(d[i]-2*h-2*(h**2-h*d[i])**0.5))
+	}
+    }
+    p = (frame % 30) / 30
+    frame++
+    sned = []
+    levelr = JSON.parse(JSON.stringify(level));
+    for (i=0;i<pawns.length;i++){
+	if (boats.indexOf(i)>=0){
+	    sned.push([old[i][0], pawns[i][1]*p+old[i][1]*(1-p),pawns[i][2],0,pawns[i][4],true])
+	    levelr[pawns[i][0]+1][pawns[i][1]] = 0
+	}else{
+	    sned.push([old[i][0] - v[i]*p - 0.5*a[i]*p**2, pawns[i][1]*p+old[i][1]*(1-p),pawns[i][2],0,pawns[i][4],false])
+	}
+    }
+	snedcrash = []
+	for (i=0;i<crashes.length;i++){
+		crash = crashes[i]
+		if (crash.length==3 && frame % 30 < 11 && frame % 30 >0){
+			snedcrash.push(crash)
+		}
+		if (crash.length==5 && frame % 30 < 16 && frame % 30 >0){
+			sned.push([crash[0] - 4*h*p + 4*h*p**2, (crash[1]+0.5)*p+(crash[1]-0.5)*(1-p), true,  0, crash[2], 0],
+					  [crash[0] - 4*h*p + 4*h*p**2, (crash[1]-0.5)*p+(crash[1]+0.5)*(1-p), false, 0, crash[3], 0])
+		}
+		if (crash[4] && crash.length==5 && (frame % 30 >15 || frame % 30 ==0)){
+			if (frame%30==0){
+				res= false
+			}
+			snedcrash.push([crash[0]-h, crash[1], crash[4]])
+		}
+		if (!crash[4] && crash.length==5 && (frame % 30 >15 && frame % 30 <26)){
+			snedcrash.push([crash[0]-h, crash[1], crash[4]])
+		}
+	}
+	
+	
+	render(sned, levelr, snedcrash)
+	}
+	if (res==null){
+    requestAnimationFrame(loop)
+	}else{
+		if (res) levelnum++
+		cdeath=false
+		for(i=0;i<crashes.length;i++)cdeath=cdeath||crashes[i][2]
+		if (res){
+		if (levelnum>problems.length) location.reload();
+		lesh(problems[levelnum-1])
+		}else{
+		if (pawns.length==0 || (pawns[0][4] && pawns[0][3])) cdeath=true
+		setTimeout(restart, 300*(cdeath))
+		}
+	}
+}   
+function restart(){
+	waiting=true
+		level = JSON.parse(JSON.stringify(aaa[aaa.length-1]));
+		frame=-dropspeed
+		pawnsr = JSON.parse(JSON.stringify(backup));
+		pawns = JSON.parse(JSON.stringify(backup2));
+		render(pawnsr, level, [])
+} 
+function start(pawns, level){
+backup = JSON.parse(JSON.stringify(pawnsr));
+backup2 = JSON.parse(JSON.stringify(pawns));
+waiting = false
+	for (i=0;i<gridy;i++){
+	for (j=0;j<gridx;j++){
+		if (level[i][j]>3) level[i][j]=0
+	}
+	}
+    for (i=0;i<pawns.length;i++){
+	if (i==0){
+		pawns[i] = [pawns[i][0], pawns[i][1], pawns[i][2], false, true, i, Array(gridx*gridy).fill(0)]
+	}else{
+		pawns[i] = [pawns[i][0], pawns[i][1], pawns[i][2], false, false, i]	
+	}
+    }
+    //pawn: y position, x position, direction, unable to move, protagonist, id, visited positions
+    
+	res=null
+	
+	drops=[]
+	for (i=0;i<pawns.length;i++){
+		counter = 0
+		while (!level[pawns[i][0]+1+counter][pawns[i][1]]){
+			counter++
+			if (pawns[i][0]+1+counter>=gridy){
+				break
+			}
+		}
+		pawns[i][0]+=counter
+		drops.push(counter)
+	}
+	frame = -dropspeed
+    requestAnimationFrame(loop)
+}
+function load(){
+    imagesLoaded++;
+    if (imagesLoaded == 30){
+            allLoaded();
+	}
+}
+function blendme(a, b, p){
+	c=[a[0]*(1-p)+b[0]*p,a[1]*(1-p)+b[1]*p,a[2]*(1-p)+b[2]*p]
+	return 'rgba('+c[0]+','+c[1]+','+c[2]+',1)'
+}
+function lesh(problem){
+
+frame = -dropspeed
+level = JSON.parse(JSON.stringify(problem[0]));
+pawns = JSON.parse(JSON.stringify(problem[1]));
+for (i=0;i<pawns.length;i++){
+	level[pawns[i][0]][pawns[i][1]]=4
+}
+aaa = [JSON.parse(JSON.stringify(level))]
+
+gridy = level.length
+gridx = level[0].length
+globaly = 0
+globalx = (1920-1080*gridx/gridy)/2
+size = 1080/gridy
+
+sel=[]
+boats=[]
+moves=0
+
+maxmoves = problem[2]
+waiting = true
+og = oger()
+	
+	pawnsr = []
+	for (i=0;i<pawns.length;i++) pawnsr.push([pawns[i][0], pawns[i][1], pawns[i][2], 0, i==0, 0])
+	render(pawnsr, level, [])
+
+}
+function oger(){
+	tmp=Array(gridy).fill(null).map(() => Array(gridx).fill(0));
+	for (i=0;i<gridy;i++){
+		for (j=0;j<gridx;j++){
+			tmp[i][j]=level[i][j]==1
+		}
+		}
+	return tmp
+}
+function front(){
+	frame0++
+	ctx.drawImage(title,0,0);	
+	ctx.drawImage(tpawn,860,350+(Math.max(0,(frame0%120)-90)-15)**2);
+	if (!moveon1 || !moveon2){ requestAnimationFrame(front)}else{lesh(problems[0])}//0
+}
+function allLoaded(){
+	frame0 = 0
+	dropspeed = 19
+	levelnum = 1
+	moveon1=false
+	moveon2=false
+	setTimeout(function(){moveon2=true}, 2000);
+	front()	
+}
+function same(a, b) {
+  for (ii=0;ii<gridy;ii++){//needs to be ii, not just i
+		for (j=0;j<gridx;j++){
+			if (a[ii][j]!=b[ii][j]) return false
+		}
+	    }
+	return true
+}
+function shifty(x,y){
+	if (waiting && moves<maxmoves){
+		ff=true
+		if ((level[y][x]>4 && level[y][x]<9)||(level[y][x]>13 && level[y][x]<18)) {
+			level[y][x]=1
+			level[sel[0]][sel[1]]=9*og[sel[0]][sel[1]]
+			ff=false
+		}
+		
+		
+		for (i=0;i<gridy;i++){
+		for (j=0;j<gridx;j++){
+			if (level[i][j]>4 && level[i][j]<9) {
+				level[i][j]=0	
+			}
+			if (level[i][j]>13 && level[i][j]<18){
+				level[i][j]=9
+			}			
+			sel=[]
+		}
+	    }
+		
+		
+		if (level[y][x]==1&&ff){
+			flag = false
+			if (y<gridy-1){
+				if ((level[y+1][x]==0||level[y+1][x]==9) && (y==gridy-2 || (level[y+2][x]!=2 && level[y+2][x]!=3))){
+					level[y+1][x] = 7+level[y+1][x]
+					flag = true
+				}
+			}
+			if (y>0){
+				if ((level[y-1][x]==0||level[y-1][x]==9) ){
+					level[y-1][x] = 5+level[y-1][x]
+					flag = true
+				}
+			}
+			if (x>0){
+				if ((level[y][x-1]==0||level[y][x-1]==9) && (y==gridy-1 || (level[y+1][x-1]!=2 && level[y+1][x-1]!=3))){
+					level[y][x-1] = 8+level[y][x-1]
+					flag = true
+				}
+			}
+			if (x<gridx-1){
+				if ((level[y][x+1]==0||level[y][x+1]==9) && (y==gridy-1 || (level[y+1][x+1]!=2 && level[y+1][x+1]!=3))){
+					level[y][x+1] = 6+level[y][x+1]
+					flag = true
+				}
+			}	
+			if (flag) sel = [y,x]
+		}
+		
+		
+		if (!ff){
+			moves++
+			aaa.push(JSON.parse(JSON.stringify(level)))
+			for (i=0;i<aaa.length-1;i++){
+				if (same(aaa[i], aaa[aaa.length-1])){
+					moves -= aaa.length-i-1
+					aaa.length = i+1
+					break
+				}
+			}
+		}
+	render(pawnsr, level, [])
+	}
+}
+canvas.addEventListener('mousedown', function(e) {
+	if (moveon1 && moveon2){
+	rect = canvas.getBoundingClientRect()
+	scalee = canvas.width / rect.width  
+	x = Math.floor(((e.clientX - rect.left)*scalee - globalx)/size)
+	y = Math.floor(((e.clientY - rect.top)*scalee - globaly)/size)
+	shifty(x,y)
+	x = (e.clientX - rect.left)*scalee
+	y = (e.clientY - rect.top)*scalee
+	if (x>=1710 && y>=436 && y<506) undoer()
+	if (x>=1710 && y>=506 && y<574) resetter()
+	if (x>=1710 && y>=574 && y<644) starter()
+	}else{
+	if (moveon2) moveon1=true
+	}	
+})
+function starter(){
+	if (waiting) start(pawns, level)
+}
+function resetter(){
+	if (waiting){
+		aaa.length=1
+		moves = 0
+		level = JSON.parse(JSON.stringify(aaa[0]))
+		render(pawnsr, level, [])
+	}
+}
+function undoer(){
+	if (waiting){
+		if (aaa.length>1){
+		aaa.pop()
+		moves--}
+		level = JSON.parse(JSON.stringify(aaa[aaa.length-1]))
+		render(pawnsr, level, [])
+	}
+}
+window.onkeydown = function(e){
+
+
+
+	
+	if (moveon1 && moveon2){
+	if (e.keyCode==90){
+		undoer()
+	}
+	
+	if (e.keyCode==82){
+		resetter()
+	}
+	
+	if (sel.length){
+	if (e.keyCode==40 && (level[sel[0]+1][sel[1]]==7||level[sel[0]+1][sel[1]]==16)){
+		shifty(sel[1],sel[0]+1)
+	}
+	if (e.keyCode==38 && (level[sel[0]-1][sel[1]]==5||level[sel[0]-1][sel[1]]==14)){
+		shifty(sel[1],sel[0]-1)
+	}
+	if (e.keyCode==37 && (level[sel[0]][sel[1]-1]==8||level[sel[0]][sel[1]-1]==17)){
+		shifty(sel[1]-1,sel[0])
+	}
+	if (e.keyCode==39 && (level[sel[0]][sel[1]+1]==6||level[sel[0]][sel[1]+1]==15)){
+		shifty(sel[1]+1,sel[0])
+	}
+	}
+	
+	
+	
+	
+	if (e.keyCode==32){
+		starter()
+	}
+	}else{
+	if ((e.keyCode==13 || e.keyCode==32) && moveon2) moveon1=true}
+	
+}
+
+
+problems = [
+
+				
+			
+				
+			   
+			   [
+			       [[0,0,0,0,0,0,0,0,0,0,0,0],
+				    [0,0,0,0,0,0,0,0,0,0,0,0],
+				    [0,0,0,0,0,0,0,0,0,0,0,0],
+				    [0,0,0,0,0,0,0,0,0,0,0,0],
+				    [0,0,1,1,1,0,0,0,0,0,0,0],
+					[0,0,0,0,1,0,0,1,0,0,0,0],
+					[0,0,0,0,0,0,0,1,1,1,0,0],
+					[0,0,0,0,0,0,0,0,0,0,0,0],
+					[0,0,0,0,0,0,0,0,0,0,3,0]],
+					[
+						[3,2,true]
+					], 2
+			   ],
+			   
+			   
+			   [
+			       [[0,0,0,0,0,0,0,0,0,0,0],
+				    [0,0,0,0,0,0,0,0,0,0,0],
+				    [0,0,0,0,0,0,0,0,0,0,0],
+				    [0,0,0,0,0,0,0,0,1,0,0],
+				    [0,0,0,0,1,1,0,1,0,0,0],
+				    [0,0,0,0,1,1,1,0,0,0,0],
+				    [0,0,0,0,0,0,0,0,0,0,0],
+				    [0,0,1,1,1,3,0,0,0,0,0]],
+					[
+						[3,5,true]
+					], 2
+			   ],
+			   
+			   	[
+			       [[0,0,0,0,0,0,0],
+				    [0,0,0,0,0,0,0],
+				    [0,0,0,0,0,0,0],
+				    [0,0,0,0,0,0,0],
+				    [0,0,1,1,1,0,0],
+				    [0,0,0,0,0,0,0],
+				    [0,0,0,0,0,3,0]],
+					[
+						[3,2,true],
+						[3,4,false]
+					], 2
+			   ],
+			   
+			 
+			   [
+			       [
+				    [0,0,0,0,0,0,0,0],
+					[0,0,0,0,0,0,0,0],
+					[0,0,0,0,0,0,0,0],
+					[0,0,1,1,1,0,0,0],
+					[0,0,1,1,1,0,0,0],
+					[0,0,0,0,0,1,0,0],
+					[0,0,3,1,1,1,0,0]],
+					[
+						[2,2,true],
+						[2,4,false],
+						[5,3,true]
+					], 2
+			   ],
+			   [
+			       [[0,0,0,0,0,0,0,0,0],
+				    [0,0,0,0,0,0,0,0,0],
+				    [0,0,1,0,0,0,0,0,0],
+				    [0,0,0,1,0,0,0,0,0],
+				    [0,0,0,0,1,0,0,0,0],
+				    [0,0,1,0,0,1,0,0,0],
+				    [0,0,1,0,1,0,1,0,0],
+				    [0,0,0,0,0,0,0,0,0],
+				    [0,0,0,0,3,0,0,0,0]],
+					[
+						[4,2,true],
+						[1,2,true]
+					], 2
+			   ],
+			   
+			   
+			       [
+			       [[0,0,0,0,0,0,0,0],
+				    [0,0,0,0,0,0,0,0],
+		    	    [0,0,0,0,0,0,0,0],
+					[0,0,0,0,1,0,0,0],
+					[0,0,1,1,1,1,0,0],
+					[0,0,0,0,0,0,0,0],
+					[0,0,0,0,3,0,0,0]],
+					[
+						[3,2,true]
+					], 2
+			   ],
+			
+			  
+			
+			   
+			   [
+			       [[0,0,0,0,0,0,0,0,0,0],
+				    [0,0,0,0,0,0,0,0,0,0],
+					[0,0,0,0,0,0,0,0,0,0],
+					[0,0,0,1,0,0,0,1,0,0],
+					[0,0,0,0,0,0,0,1,0,0],
+					[0,0,0,0,1,0,0,0,0,0],
+					[0,0,1,1,1,1,1,1,3,0]],
+					[
+						[5,2,true],
+						[5,7,false],
+						[2,7,false],
+						[2,3,true]
+					], 2
+			   ],
+			   
+			   
+			   [
+				   [[0,0,0,0,0,0,0,0,0,0,0],
+				    [0,0,0,0,0,0,0,0,0,0,0],
+				    [0,0,0,0,0,0,0,0,0,0,0],
+					[0,0,0,1,0,1,1,1,0,0,0],
+					[0,0,1,0,0,0,0,0,1,0,0],
+					[0,0,0,1,0,0,1,1,1,0,0],
+					[0,0,0,0,0,0,0,0,0,0,0],
+					[0,0,0,0,3,0,1,0,0,0,0]],
+					[
+						[2,6,true],
+						[2,5,false]
+					], 2
+			   ],
+			   
+				
+			   
+			 
+			   
+			   
+			      [
+							   [
+							    [0,0,0,0,0,0,0,0,0],
+                                [0,0,0,0,0,0,0,0,0],
+                                [0,0,0,1,0,0,0,0,0],
+                                [0,0,1,1,1,1,1,0,0],
+                                [0,0,0,1,0,1,0,0,0],
+                                [0,0,0,0,0,0,0,0,0],
+                                [0,0,0,0,3,0,0,0,0]],
+					[
+						[2,4,true]
+					], 2
+			   ],
+			   
+			   
+			  
+			   [
+			       [[0,0,0,0,0,0,0,0,0,0,0],
+				    [0,0,0,0,0,0,0,0,0,0,0],
+				    [0,0,0,1,1,0,0,0,0,0,0],
+				    [0,0,0,0,0,0,0,0,0,0,0],
+				    [0,0,1,1,1,1,1,0,0,0,0],
+				    [0,0,0,0,1,0,0,0,0,0,0],
+				    [0,0,1,0,1,0,0,1,1,0,0],
+				    [0,0,0,0,0,0,0,0,0,0,0],
+					[0,0,3,0,1,1,1,0,0,0,0]],
+					[
+						[7,2,true],
+						[1,4,false],
+						[3,2,false],
+						[3,6,false],
+						[5,2,true],
+						[5,8,false]
+					], 2
+			   ],
+			   
+			     [
+							   [[0,0,0,0,0,0,0,0],
+                                [0,0,0,0,0,0,0,0],
+                                [0,0,0,0,0,0,0,0],
+                                [0,0,0,0,0,1,0,0],
+                                [0,0,1,1,1,1,0,0],
+                                [0,0,0,1,0,0,0,0],
+                                [0,0,0,0,3,0,0,0]],
+					[
+						[3,2,true],
+                                                [2,5,false]  
+					], 2
+			   ],
+			   
+			   
+			   [
+			       [[0,0,0,0,0,0,0,0,0,0,0,0],
+					[0,0,0,0,0,0,0,0,0,0,0,0],
+					[0,0,0,0,0,0,0,0,0,0,0,0],
+					[0,0,0,0,0,0,0,0,0,0,0,0],
+                	[0,0,1,1,0,0,1,1,0,0,0,0],
+					[0,0,0,0,0,0,0,0,0,0,1,0],
+					[0,1,1,1,0,0,1,0,1,1,1,0],
+					[0,0,0,0,0,0,0,1,0,0,0,0],
+					[0,0,0,0,0,3,0,0,0,0,0,0]],
+					[
+						[3,6,true],
+						[3,2,true],
+						[5,1,true],
+						[5,6,false]
+					], 2
+			   ]
+			  
+		       
+			]
+		   
+
+
+
+colors=[[197.2899061271749,212.7100938728251,255],
+[255,192.9931440838745,217.0068559161255],
+[255,231.4658817,178.53411152711283],
+[200.81846776692973,255,209.18153223307027],
+[214.72662952688654,195.27337047311346,255],
+[249.10509731659255,255,160],
+[209.51651471271362,255,200.48348528728638],
+[255,168.7848516972934,241.2151483027066], 
+[197.2899061271749,212.7100938728251,255],
+[231.0425868,255,178.95749899393132],
+[235.99565781508846,174.00434218491154,255],
+[174.99589450610918,255,235.00410549389082],
+[255,255,255]]
+
+
+
+
+</script>
+</body>
+</html>
