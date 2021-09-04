@@ -337,7 +337,6 @@ function render(pawns, level, crashes){
     }
 	
 	ctx.fillStyle=blendme(colors[levelnum-1], colors[levelnum], blend)
-	if (frame==66) console.log(blendme(colors[levelnum-1], colors[levelnum], blend))
     ctx.fillRect(0,0,1920,1080)
 	
     for (pi=0;pi<pawns.length;pi++){
